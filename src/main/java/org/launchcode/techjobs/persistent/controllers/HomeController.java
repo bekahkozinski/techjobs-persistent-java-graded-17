@@ -1,7 +1,11 @@
 package org.launchcode.techjobs.persistent.controllers;
 
 import jakarta.validation.Valid;
+import org.launchcode.techjobs.persistent.models.Employer;
 import org.launchcode.techjobs.persistent.models.Job;
+import org.launchcode.techjobs.persistent.models.data.EmployerRepository;
+import org.launchcode.techjobs.persistent.models.data.JobRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -16,6 +20,9 @@ import java.util.Optional;
  */
 @Controller
 public class HomeController {
+
+    @Autowired
+    private EmployerRepository employerRepository;
 
     @RequestMapping("/")
     public String index(Model model) {
@@ -41,6 +48,14 @@ public class HomeController {
             return "add";
         }
 
+        Optional<Employer> result = employerRepository.findById(employerId);
+        if (result.isPresent()) {
+            Employer employer = result.get();
+            newJob.setEmployer(employer);
+        }
+
+        jobRepository.save(newJob);
+
         return "redirect:";
     }
 
@@ -49,5 +64,6 @@ public class HomeController {
 
             return "view";
     }
+
 
 }
